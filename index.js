@@ -3,8 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dns from 'node:dns';
-import url from 'node:url';
-import { json } from 'node:stream/consumers';
 const app = express();
 
 // parse application/x-www-form-urlencoded
