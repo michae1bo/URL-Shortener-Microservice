@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const mongoose = require('mongoose');
+
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
@@ -22,3 +24,6 @@ app.get('/api/hello', function(req, res) {
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
+
+// mongoose
+mongoose.connect(process.env.MONGO_URI);
