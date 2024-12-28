@@ -32,19 +32,23 @@ app.get('/', function(req, res) {
 app.post('/api/shorturl', async function(req, res) {
   let responseJSON;
   const inputURL = req.body.url;
-  let URL = await ShortURL.findOne({ original_url: inputURL });
-  if (URL === null) {
-    let maxID = await ShortURL.find({}, { short_url: 1 , _id: 0}).sort({ short_url: -1 }).limit(1);
-    if (maxID[0] === undefined) {
-      maxID = 0;
+  if (isValidURL(inputURL)) {
+    let URL = await ShortURL.findOne({ original_url: inputURL });
+    if (URL === null) {
+      let maxID = await ShortURL.find({}, { short_url: 1 , _id: 0}).sort({ short_url: -1 }).limit(1);
+      if (maxID[0] === undefined) {
+        maxID = 0;
+      } else {
+        maxID = maxID[0].short_url;
+      }
+      let newURL = new ShortURL({short_url: maxID + 1, original_url: inputURL});
+      newURL.save();
+      responseJSON = { original_url: inputURL, short_url: maxID + 1 };
     } else {
-      maxID = maxID[0].short_url;
+      responseJSON = { original_url: URL.original_url, short_url: URL.short_url };
     }
-    let newURL = new ShortURL({short_url: maxID + 1, original_url: inputURL});
-    newURL.save();
-    responseJSON = { original_url: inputURL, short_url: maxID + 1 };
   } else {
-    responseJSON = { original_url: URL.original_url, short_url: URL.short_url };
+    responseJSON = { error: 'invalid url' };
   }
   res.json(responseJSON);
 });
@@ -66,4 +70,14 @@ const urlSchema = new mongoose.Schema({
 });
 
 const ShortURL = mongoose.model("ShortURL", urlSchema);
+
+function isValidURL(inputURL) {
+  try {
+    new URL(inputURL);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 
