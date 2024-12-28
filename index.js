@@ -1,9 +1,9 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+import 'dotenv/config'
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
 const app = express();
 
-const mongoose = require('mongoose');
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -17,8 +17,8 @@ app.get('/', function(req, res) {
 });
 
 // Your first API endpoint
-app.get('/api/hello', function(req, res) {
-  res.json({ greeting: 'hello API' });
+app.post('/api/shorturl', function(req, res) {
+  res.json({});
 });
 
 app.listen(port, function() {
@@ -27,3 +27,20 @@ app.listen(port, function() {
 
 // mongoose
 mongoose.connect(process.env.MONGO_URI);
+
+const urlSchema = new mongoose.Schema({
+  _id: {
+    type: Number
+  },
+  url: {
+    type: String
+  }
+});
+
+const ShortURL = mongoose.model("ShortURL", urlSchema);
+
+const findMaxId = ShortURL.find({}, { _id: 1 }).sort({ _id: -1 });
+
+const maxID = await findMaxId.exec()[0];
+console.log(maxID);
+
