@@ -2,8 +2,16 @@ import 'dotenv/config'
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
 const app = express();
+
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({
+  extended: true
+}));
+
+// parse application/json
+app.use(express.json());
+
 
 
 // Basic Configuration
@@ -19,7 +27,8 @@ app.get('/', function(req, res) {
 
 // Your first API endpoint
 app.post('/api/shorturl', function(req, res) {
-  res.json({});
+  const URL = req.body.url;
+  console.log(URL);
 });
 
 app.listen(port, function() {
